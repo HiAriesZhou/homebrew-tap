@@ -4,7 +4,15 @@ on:
   push:
     branches: [main]
   pull_request:
+    # 此仓库未配置必需状态检查，纯文档拉取请求可直接跳过。
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
